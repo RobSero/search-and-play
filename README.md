@@ -4,11 +4,12 @@
 
 36 hours
 
-## Goal:
+## 1.0 - Brief:
 
-A pair-coded project to develop a React app using external APIs.
+Pair Programming hackathon project strictly focusing on client side technologies and AJAX requests.
 
-## Technologies Used
+
+## 2.0 - Technologies Used
 
 - iTunes Search API
 - React.js
@@ -30,7 +31,7 @@ An interactive & animated music preview app based on the [iTunes Search API](htt
 
 https://search-and-play.netlify.app/
 
-## Code Installation
+## 4.0 - Code Installation
 
 https://github.com/purvitrivedi/search-and-play
 
@@ -38,19 +39,33 @@ https://github.com/purvitrivedi/search-and-play
 - Install yarn in Terminal by typing: <code>yarn</code>
 - Start server with yarn start
 
-## Planning
+## 5.0 - Planning
 
-### Testing the API on Insomnia
+### 5.1 - Allocating Responsibilities
 
-We were pretty set on using a music-based API and since this was a hackthon - iTunes Search API was the most accessible.
+Once the initial concept was confirmed and we wanted to proceed into planning the app - We wanted to set out clear goals, milestones and responsibilities for the remainder of the project.
 
-The API returns 200 media (music,podcasts, videos etc.) results based on a query. For music media, the results included track details, album covers and previewTrackURL.
+We both wanted to get exposure to all aspects of the project and so we confirmed that we would have joint responsibility for testing APIs and setting up all AJAX requests then we would split up different areas of the UI into our own responsibilities. 
 
-We found 4 queries that we could use on our app.:
+### 5.2 - Selecting an API
 
-By default the API would give 50 results, so we added <code>limit=200</code> in the url as that is the maximum amount of results it can give us.
+We tested various music APIs which provided us with songs based on the params fed into the HTTP requests and the aim for us was to start refining which API we would use for the app.
+
+We used Insomnia to test the various APIs and we were judging which one to use on the following criteria:
+- Ease of documentation
+- How strict the API wwas in terms of what params were sent
+- The selection of songs available
+- The detail of the API response for a song
+
+After assessing the APIs, we settled on using iTunes Search API mainly because of how forgiving the API was for what params were sent to it. Ultimately it would be users who are searching for songs on the app and so poor grammer and spelling mistakes would not have crashed the app because iTunes were very good at figuring out what was typed and still sent a response.
+
+ Many other apps we tried would reject the http request if it was spelt wrong and this would have led to the app failing.
+
+ The documentation from iTunes was also very well put together and clear of the requirements.
 
 <img src="src/assets/insomnia.png" alt="insomnia" />
+
+### 5.3 - API Example Requests
 
 - Search by Word: https://itunes.apple.com/search?term=solange&media=music&entity=song&limit=200
 
@@ -60,19 +75,27 @@ By default the API would give 50 results, so we added <code>limit=200</code> in 
 
 - Search by Word in Album Name: https://itunes.apple.com/search?term=butterfly&attribute=albumTerm&media=music&entity=song&limit=200
 
-### Prototypes with Miro
+### 5.4 - Prototypes with Miro
 
-We decided to have a simple two page app: Home Page (/) & Tracks Page (/tracks). The Tracks page would show all the results as an index until a user clicked on them. Once a user has clicked on an album cover, the album index will skew and make space for the track.
+Miro was used to prototype the app as it was a simple to setup and use platform which allowed us to create designs with minimal effort (due to the limited time of the hackathon, this was essential).
+
+We experiemented with different layouts and decided quite early on that we would focus less on the amount of content we put into the app but work more on creating an interesting user experience with different css effects and transitions.
+
+This would effectively mean we were leaving the content of the app to be determined by the user search and the API response. 
+
+As a result, we decided on a simple two page application - The search/home page and the music index page (single page react app but two views to be rendered) .
 
 <img src="src/assets/home-page-miro.png" alt="home-page" width="300" /> <img src="src/assets/album-index-miro.png" alt="album-index" width="300" /> <img src="src/assets/artist-show-miro.png" alt="artist-show" width="300" />
 
-## Development
+## 6.0 - Development
 
-### The Home Page
+### 6.1 - The Home Page
 
 <img src="src/assets/home-page-site.png" alt="home-page-site"/>
 
-The Home page along with SearchBar make two common components of the app. On load, the homepage calls <code>componentDidMount</code> function using axios for the home page styling. The axios request <code>getAllSongs</code> in lib > api.js file:
+Initially we both worked on the home page as we wanted to get the Axios requests set up first and so we used VSCode livesharing so we could both type the code on the same file at the same time (as we were both working remotely).
+
+The home page consistented of two main elements: Search bar and a selection of random album covers. Upon mount, the album covers were consumed from the iTunes API with a get request and then mapped out in the component.
 
     export const getAllSongs = (term, attribute) => {
       if (attribute === 'Any') {
@@ -85,7 +108,8 @@ The Home page along with SearchBar make two common components of the app. On loa
 
 <em><code>cors-anywhere.herokuapp</code> was added after the deployed on Heroku so we are not blocked by CORS policy.</em>
 
-The search bar is a child component of the Home Page, which collects the search team and attribute(All, songTerm, artistTerm, albumTerm). On hitting enter, we are able to pass these as props by adding them to URL of the Music Index Page.
+The search bar was a controlled component within the Home page's state and the user's input was stored in state so once the form had been submitted, the user would be taken to the music index page and the query would be stored within the url so the index page could make the axios request.
+The dropdown selection would allow a user to refine their search (dropdown options were limited to what attriubtes the API would accept) or if no attribute was selected, the ternary operator would set it to 'Any' and add that to the url query.
 
     handleSubmit = (event) => {
       let term = this.state.search.term
@@ -97,15 +121,17 @@ The search bar is a child component of the Home Page, which collects the search 
       this.props.history.push(`/tracks/${term}&${attribute}`)
     }
 
-### Music Index Page
+### 6.2 - Music Index Page
 
 ![Music Index](src/assets/album-index-gif.gif)
 
-On loading, the Music Index Component retrieves the 'term' and 'attribute' values from the URL to send the <code>getAllSongs</code> GET request:
+Upon mounting, the home page had set the url to contain the queries required and so the ComponentDidMount function would gather this information and send the GET request over to iTunes. The code below was used to format the search term and attribute into a format which would be accepted by the API in the GET reqeust. It would take the url string and remove the '/' and replace space characters with a '+'.
 
     const urlDetails = this.props.location.pathname
         const term = urlDetails.split('/')[2].split('&')[0].replace(' ', '+')
         const attribute = urlDetails.split('/')[2].split('&')[1]
+
+The http response was an array of songs which was then mapped to the index page to show the song's album image.
 
 There are two events on the displayed album covers:
 
@@ -117,7 +143,8 @@ onMouseClick: Skew the index and show the artist details and play the song.
       setTimeout(() => { this.setState({ singleArtist: event, isShowingArtist:  true, volume: 0.6 }) }, 500)
     }
 
-We enable the page to show the the artist on the right by using Boolean state values and conditional rendering.
+I was responsible for adding the transition effect when the user clicked on an album which would alter the state and cause the song to transition in while the album index skewed.
+The ternary operators would check if an album was clicked and then add the css class 'slidingAnimation' which would cause the CSS effect to fire.
 
     <div
     className={`container column
@@ -129,9 +156,9 @@ We enable the page to show the the artist on the right by using Boolean state va
         volume={this.state.volume}/>
     </div>
 
-### Artist Show Section:
+### 6.3 - Artist Show Section:
 
-At this point, the index skews to half of the page:
+The code snippet below details the CSS used to cause the skew effects and the sliding transition for the index and show pages.
 
     .skew {
       transform: rotateY(55deg) skew(-13deg) scale(0.95);
@@ -161,35 +188,30 @@ and the Artist show section comes in with Sliding Animation:
       }
     }
 
+We tried a few different audio players to see which felt better and we also wanted one that allowed the user to have controls, autoplayed when component mounted and visually was fair interesting. 
+
+We found that audio players were actually fairly tricky to style and ideally if we had more time we would have put more time into this element however we had to prioritise other features in the short timespan.
+
 In this page we use the React Audio Player as it's slightly better than HTML Audio player. We set it to 'autoplay' so the song begins playing as the page animates into this section:
 
     <ReactAudioPlayer autoPlay controls={true} src={props.previewUrl} volume={props.volume}/>
 
-### Finishing Touches & Styling
+### 6.4 - Finishing Touches & Styling
 
-In the last 4-5 hours we focused on adding some finishing touches such as:
+Once the core features were implemented and working smoothly, we used the remaining time just to experiement with interesting effects and pre-built React components.
 
-* Adding back button on the Music Index Page
-* Styling the artist show section with flexbox
-* Adding flashes to the music index (done by re-rendering the page on a timer to assign <code>className="flash"</code> to random albums)
-* Styling Home Page
+Initiially we planned to give ourselves a minimum of 5 hours to just focus on the user experience and so we knew from this point that anything extra we could add in was just a bonus. Wanting to make it as best we could, we still kep the intensity up until the deadline.
 
 
-## Wins
+### 7.0 - Self Reflection
+## 7.1 - Wins
 
-Styling :sparkles: . Very pleased with how fun this app is, we learnt so much about animations, timers and using conditonal rendering.
+- Despite being a little bit confusing, I really enjoyed making the albums flash randomly throughout the page by adding transitions and classes to be added based on a random number generator.
+- It was great practice to work with my peer and we worked very well together, bouncing ideas off one another. It was also the first time using VSCode liveshare so it was interesting to get used to typing on the same file as somebody else.
 
-Teamwork :raised_hands: . This was the first time I pair-coded for almost 2 days and it was wonderful experience. Rob and I worked were always in sync and found that 
+## 7.2  -Challenges
 
-<code> bouncing personal ideas off each other === better ideas </code>
-
-## Challenges
-
-CORS :no_entry_sign: . While were able to solve this easily after deployment, the why of it took me a while to fully understand. Out tutor was very helpful in explaining CORS in details.
-
-## Future Improvements
-
-* Make is Responsive (Done)
-* Audio Fade in and Out
+- Due to the short timescale, it sometimes was tricky to keep code as clean as possible however this is a minor issues which a bit of time refactoring would resolve.
+- We experienced CORS issues when trying to make AJAX request once deployed to Heroku however this was resolved with altering the http paths which can be found in the lib folder.
 
 
