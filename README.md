@@ -53,11 +53,11 @@ We tested various music APIs which provided us with songs based on the params fe
 
 We used Insomnia to test the various APIs and we were judging which one to use on the following criteria:
 - Ease of documentation
-- How strict the API wwas in terms of what params were sent
+- How strict the API was in terms of what params were sent
 - The selection of songs available
 - The detail of the API response for a song
 
-After assessing the APIs, we settled on using iTunes Search API mainly because of how forgiving the API was for what params were sent to it. Ultimately it would be users who are searching for songs on the app and so poor grammer and spelling mistakes would not have crashed the app because iTunes were very good at figuring out what was typed and still sent a response.
+After assessing the APIs, we settled on using iTunes Search API mainly because of how forgiving the API was for what params were sent to it. Ultimately it would be users who are searching for songs on the app and so poor grammar and spelling mistakes would not have crashed the app because iTunes were very good at figuring out what was typed and still sent a response.
 
  Many other apps we tried would reject the http request if it was spelt wrong and this would have led to the app failing.
 
@@ -79,7 +79,7 @@ After assessing the APIs, we settled on using iTunes Search API mainly because o
 
 Miro was used to prototype the app as it was a simple to setup and use platform which allowed us to create designs with minimal effort (due to the limited time of the hackathon, this was essential).
 
-We experiemented with different layouts and decided quite early on that we would focus less on the amount of content we put into the app but work more on creating an interesting user experience with different css effects and transitions.
+We experimented with different layouts and decided quite early on that we would focus less on the amount of content we put into the app but work more on creating an interesting user experience with different css effects and transitions.
 
 This would effectively mean we were leaving the content of the app to be determined by the user search and the API response. 
 
@@ -93,9 +93,9 @@ As a result, we decided on a simple two page application - The search/home page 
 
 <img src="src/assets/home-page-site.png" alt="home-page-site"/>
 
-Initially we both worked on the home page as we wanted to get the Axios requests set up first and so we used VSCode livesharing so we could both type the code on the same file at the same time (as we were both working remotely).
+Initially we both worked on the home page as we wanted to get the Axios requests set up first and so we used VSCode live-sharing so we could both type the code on the same file at the same time (as we were both working remotely).
 
-The home page consistented of two main elements: Search bar and a selection of random album covers. Upon mount, the album covers were consumed from the iTunes API with a get request and then mapped out in the component.
+The home page consisted of two main elements: Search bar and a selection of random album covers. Upon mount, the album covers were consumed from the iTunes API with a get request and then mapped out in the component.
 
     export const getAllSongs = (term, attribute) => {
       if (attribute === 'Any') {
@@ -109,7 +109,7 @@ The home page consistented of two main elements: Search bar and a selection of r
 <em><code>cors-anywhere.herokuapp</code> was added after the deployed on Heroku so we are not blocked by CORS policy.</em>
 
 The search bar was a controlled component within the Home page's state and the user's input was stored in state so once the form had been submitted, the user would be taken to the music index page and the query would be stored within the url so the index page could make the axios request.
-The dropdown selection would allow a user to refine their search (dropdown options were limited to what attriubtes the API would accept) or if no attribute was selected, the ternary operator would set it to 'Any' and add that to the url query.
+The dropdown selection would allow a user to refine their search (dropdown options were limited to what attributes the API would accept) or if no attribute was selected, the ternary operator would set it to 'Any' and add that to the url query.
 
     handleSubmit = (event) => {
       let term = this.state.search.term
@@ -125,7 +125,7 @@ The dropdown selection would allow a user to refine their search (dropdown optio
 
 ![Music Index](src/assets/album-index-gif.gif)
 
-Upon mounting, the home page had set the url to contain the queries required and so the ComponentDidMount function would gather this information and send the GET request over to iTunes. The code below was used to format the search term and attribute into a format which would be accepted by the API in the GET reqeust. It would take the url string and remove the '/' and replace space characters with a '+'.
+Upon mounting, the home page had set the url to contain the queries required and so the ComponentDidMount function would gather this information and send the GET request over to iTunes. The code below was used to format the search term and attribute into a format which would be accepted by the API in the GET request. It would take the url string and remove the '/' and replace space characters with a '+'.
 
     const urlDetails = this.props.location.pathname
         const term = urlDetails.split('/')[2].split('&')[0].replace(' ', '+')
@@ -188,9 +188,9 @@ and the Artist show section comes in with Sliding Animation:
       }
     }
 
-We tried a few different audio players to see which felt better and we also wanted one that allowed the user to have controls, autoplayed when component mounted and visually was fair interesting. 
+We tried a few different audio players to see which felt better and we also wanted one that allowed the user to have controls, auto-played when component mounted and visually was fairly interesting. 
 
-We found that audio players were actually fairly tricky to style and ideally if we had more time we would have put more time into this element however we had to prioritise other features in the short timespan.
+We found that audio players were actually fairly tricky to style and ideally if we had more time we would have put more time into this element however we had to prioritize other features in the short timespan we had.
 
 In this page we use the React Audio Player as it's slightly better than HTML Audio player. We set it to 'autoplay' so the song begins playing as the page animates into this section:
 
@@ -198,20 +198,20 @@ In this page we use the React Audio Player as it's slightly better than HTML Aud
 
 ### 6.4 - Finishing Touches & Styling
 
-Once the core features were implemented and working smoothly, we used the remaining time just to experiement with interesting effects and pre-built React components.
+Once the core features were implemented and working smoothly, we used the remaining time just to experiment with interesting effects and pre-built React components.
 
-Initiially we planned to give ourselves a minimum of 5 hours to just focus on the user experience and so we knew from this point that anything extra we could add in was just a bonus. Wanting to make it as best we could, we still kep the intensity up until the deadline.
+Initially we planned to give ourselves a minimum of 5 hours to just focus on the user experience and so we knew from this point that anything extra we could add in was just a bonus. Wanting to make it as best we could, we still keep the intensity up until the deadline.
 
 
-### 7.0 - Self Reflection
-## 7.1 - Wins
+## 7.0 - Self Reflection
+### 7.1 - Wins
 
-- Despite being a little bit confusing, I really enjoyed making the albums flash randomly throughout the page by adding transitions and classes to be added based on a random number generator.
-- It was great practice to work with my peer and we worked very well together, bouncing ideas off one another. It was also the first time using VSCode liveshare so it was interesting to get used to typing on the same file as somebody else.
+- I really enjoyed making the albums flash randomly throughout the page by adding transitions and classes to be added based on a random number generator. It was a good opportunity to practice re-rendering components and altering state change.
+- It was great practice to work alongside other developers and we worked smoothly together, bouncing ideas off one another. It was also the first time using VSCode live-share so it was interesting to get used to typing on the same file as somebody else.
 
-## 7.2  -Challenges
+### 7.2  -Challenges
 
-- Due to the short timescale, it sometimes was tricky to keep code as clean as possible however this is a minor issues which a bit of time refactoring would resolve.
-- We experienced CORS issues when trying to make AJAX request once deployed to Heroku however this was resolved with altering the http paths which can be found in the lib folder.
+- Due to the short timescale, it sometimes was tricky to keep code as clean as possible however this is a minor issue which a bit of time refactoring would resolve.
+- We experienced CORS issues when trying to make AJAX requests once deployed to Heroku however this was resolved with altering the http paths which can be found in the lib folder.
 
 
